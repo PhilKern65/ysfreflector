@@ -1,4 +1,10 @@
-# Logs
+# Build artifacts
+*.o
+
+# Reflector logs
+YSFReflector-*.log
+
+# Generic logs
 *.log
 logs/
 
@@ -19,3 +25,5 @@ __pycache__/
 # OS junk
 .DS_Store
 Thumbs.db
+
+status.json
