@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<!--
+==================================================
+KernWi-Fi YSF Admin Dashboard
+Revision: 1.1.4
+Date: 20 May 2026
+
+Changes:
+- Fixed JSON caching issue (added timestamp fetch)
+- Ensures accurate real-time data display
+==================================================
+-->
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>YSF Admin Dashboard</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+<style>
+body {
+  background: #0a0f1a;
+  color: #e6edf3;
+  font-family: Arial;
+  margin: 0;
+  padding-top: 70px;
+  padding-bottom: 50px;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #7f1d1d;
+  padding: 12px 20px;
+  color: white;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 10px;
+}
+
+.box {
+  background: #1c2333;
+  padding: 15px;
+  margin: 14px 0;
+  border-radius: 10px;
+}
+
+/* SYSTEM */
+.system-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.system-item { text-align:center; }
+
+.system-item strong {
+  font-size: 12px;
+  color: #9ca3af;
+  display:block;
+}
+
+.system-item span {
+  font-size:17px;
+  font-weight:600;
+}
+
+/* STATUS COLOURS */
+.status-online { color:#4ade80; }
+
+.active  { color:#ef4444; font-weight:bold; }
+.idle    { color:#fbbf24; }
+.stale   { color:#6b7280; }
+
+/* TABLE */
+.table-container {
+  max-height:400px;
+  overflow-y:auto;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td {
+  padding:6px;
+  border-bottom:1px solid #333;
+  text-align:center;
+}
+
+thead th {
+  position:sticky;
+  top:0;
+  background:#1c2333;
+}
+
+/* SEARCH */
+#searchInput {
+  width:100%;
+  padding:8px;
+  background:#0a0f1a;
+  color:#fff;
+}
+
+/* CONNECTIONS */
+.connections-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.connection-block { margin-bottom:10px; }
+
+.sub {
+  margin-left:20px;
+  font-size:13px;
+  color:#9ca3af;
+}
+
+/* FOOTER */
+.footer {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#7f1d1d;
+  padding:8px;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+YSFReflector Admin Dashboard ⚠️ Restricted Access
+</div>
+
+<div class="container">
+
+<div class="box">
+<h3>📊 System Info</h3>
+
+<p>Version: <span id="version"></span></p>
+
+<div class="system-grid">
+  <div class="system-item">
+    <strong>Status</strong>
+    <span id="status"></span>
+  </div>
+  <div class="system-item">
+    <strong>Total Connections</strong>
+    <span id="connections"></span>
+  </div>
+  <div class="system-item">
+    <strong>Active TX</strong>
+    <span id="tx"></span>
+  </div>
+</div>
+
+<div style="margin-top:10px;text-align:center;">
+<button onclick="restart('reflector')" style="background:#ef4444;color:white;padding:8px;border:none;border-radius:6px;">
+🔄 Restart Reflector
+</button>
+<button onclick="restart('dashboard')" style="background:#3b82f6;color:white;padding:8px;border:none;border-radius:6px;">
+🔁 Restart Dashboard
+</button>
+</div>
+
+</div>
+
+<!-- TABLE -->
+<div class="box">
+<h3>📋 Connection Table</h3>
+
+<input id="searchInput" placeholder="🔍 Search..." onkeyup="filterTable()">
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Callsign</th>
+<th>IP</th>
+<th>Last Seen</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
+</div>
+
+<!-- CONNECTIONS -->
+<div class="box">
+<h3>🔗 Active Connections</h3>
+<div id="connectionsGrid" class="connections-grid"></div>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 KernWi‑Fi Pty Ltd · Ver <span id="versionFooter"></span> · Admin Rev 1.1.4
+</div>
+
+<script>
+
+const LOCAL_CALLSIGN="VK5PK";
+
+function formatTime(s){
+  if(s<60) return s+"s ago";
+  if(s<3600) return Math.floor(s/60)+"m ago";
+  return ">1h";
+}
+
+function filterTable(){
+  let v=document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll("#table tr").forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(v)?"":"none";
+  });
+}
+
+function restart(service){
+  fetch("restart.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:"service="+service
+  });
+}
+
+async function loadAdmin(){
+
+  // ✅ FIX: always fetch fresh JSON
+  let d = await fetch("/ysf/status.json?ts=" + Date.now())
+    .then(r => r.json());
+
+  document.getElementById("version").innerText=d.version;
+  document.getElementById("versionFooter").innerText=d.version;
+  document.getElementById("connections").innerText=d.connection_count;
+
+  document.getElementById("status").innerHTML =
+    '<span class="status-online">ONLINE</span>';
+
+  document.getElementById("tx").innerHTML = d.transmitting ?
+    `<span class="active">🔴 ${d.transmitting}</span>` :
+    `<span class="idle">None</span>`;
+
+  let cs = Object.keys(d.connections);
+  cs.sort((a,b)=>a.localeCompare(b));
+
+  // TABLE
+  let table="";
+  cs.forEach(c=>{
+    d.connections[c].forEach(e=>{
+      let status = e.last_seen<60?"ACTIVE":
+                   e.last_seen<1800?"IDLE":"STALE";
+
+      table+=`<tr>
+        <td>${c===LOCAL_CALLSIGN?c+" ⭐":c}</td>
+        <td>${e.ip}</td>
+        <td>${formatTime(e.last_seen)}</td>
+        <td class="${status.toLowerCase()}">${status}</td>
+      </tr>`;
+    });
+  });
+
+  document.getElementById("table").innerHTML=table;
+
+  // CONNECTIONS
+  let mid=Math.ceil(cs.length/2);
+
+  function col(list){
+    let html="";
+    list.forEach(c=>{
+      let star=c===LOCAL_CALLSIGN?" ⭐":"";
+
+      html+=`<div class="connection-block">
+        <strong>${c}${star}</strong>`;
+
+      d.connections[c].forEach(e=>{
+        let status=e.last_seen<60?"ACTIVE":
+                   e.last_seen<1800?"IDLE":"STALE";
+
+        html+=`<div class="sub">
+          ↳ ${e.ip} (<span class="${status.toLowerCase()}">${status}</span>,
+          ${formatTime(e.last_seen)})
+        </div>`;
+      });
+
+      html+="</div>";
+    });
+
+    return html;
+  }
+
+  document.getElementById("connectionsGrid").innerHTML =
+    `<div>${col(cs.slice(0,mid))}</div>
+     <div>${col(cs.slice(mid))}</div>`;
+}
+
+loadAdmin();
+setInterval(loadAdmin,2000);
+
+</script>
+
+</body>
+</html>
