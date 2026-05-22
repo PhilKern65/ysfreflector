@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <!--
 ==================================================
-KernWi-Fi YSF Dashboard
-Revision: 1.7.2
-Date: 19 May 2026
+KernWi-Fi YSF Public Dashboard
+Revision: 2.8.2
+Date: 22 May 2026
 
 Changes:
-- TX row background highlight
-- Bold TX user
-- Spacing polish
-- Footer link styling using .status-link
+- Restored LEFT-aligned topbar
+- Preserved original header design:
+    KernWi‑Fi (link) | YSF Reflector Network
+- Retained all functionality from Rev 2.6+
+
+Notes:
+- Requires backend Ver 1.17.9
 ==================================================
 -->
 
 <html>
 <head>
 <meta charset="UTF-8">
-<title>KernWi-Fi YSF Network</title>
-
-<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<title>YSFReflector Dashboard</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
 
 <style>
 body {
@@ -30,36 +32,43 @@ body {
   padding-bottom: 50px;
 }
 
-/* TOP MENU */
+/* ✅ TOP BAR (LEFT ALIGNED) */
 .topbar {
   position: fixed;
   top: 0;
   width: 100%;
   background: #111827;
   padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  z-index: 1000;
+  font-size: 16px;
+  border-bottom: 1px solid #333;
+  text-align: left;   /* ✅ KEY FIX */
 }
 
-.topbar-left a {
-  color: #4da3ff;
+.topbar a {
+  color: #60a5fa;
   text-decoration: none;
+  font-weight: 600;
 }
 
-.topbar-right {
-  margin-left: auto;
-  margin-right: 40px;
-  display: flex;
-  gap: 12px;
-  color: #4da3ff;
+.topbar a:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.divider {
+  margin: 0 8px;
+  color: #6b7280;
+}
+
+.title {
+  font-weight: 500;
 }
 
 /* CONTENT */
 .container {
-  max-width: 800px;
+  max-width: 600px;
   margin: auto;
-  padding: 10px;
+  padding: 20px;
   text-align: center;
 }
 
@@ -67,45 +76,38 @@ body {
   background: #1c2333;
   padding: 15px;
   margin: 12px 0;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-.status-online { color: #4ade80; }
+/* STATUS */
+.online { color: #4ade80; }
+.active { color: #ef4444; font-weight: bold; }
+.idle { color: #fbbf24; }
 
-.status-link {
-  color: #4da3ff;
-  text-decoration: none;
-}
-
-.status-link:hover {
-  text-decoration: underline;
-}
-
-.tx-live {
-  color: red;
-  font-weight: bold;
-  animation: blink 1s infinite;
-}
-
-/* TX ROW */
-.tx-row {
-  background: rgba(255, 0, 0, 0.08);
+/* USERS */
+.callsign {
+  display: block;
+  width: 200px;
+  margin: 4px auto;
+  padding: 6px 10px;
+  background: #111827;
   border-radius: 6px;
-  padding: 4px 6px;
+  text-align: left;
 }
 
-@keyframes blink {
-  50% { opacity: 0.3; }
+/* ACTIVE USER */
+.active-user {
+  color: #ef4444;
+  font-weight: bold;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
-/* SPACING */
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-ul li {
+/* LAST HEARD */
+#heard div {
   margin: 4px 0;
+  font-size: 14px;
+  color: #9ca3af;
 }
 
 /* FOOTER */
@@ -116,167 +118,121 @@ ul li {
   background: #111827;
   padding: 8px;
   font-size: 12px;
+  color: #9ca3af;
+  border-top: 1px solid #333;
   text-align: center;
-  color: #aaa;
+}
+
+.footer a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #93c5fd;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
+<!-- ✅ ORIGINAL HEADER RESTORED -->
 <div class="topbar">
-
-  <div class="topbar-left">
-    <a href="https://kernwifi.com.au" target="_blank" class="status-link">
-      <strong>KernWi-Fi</strong>
-    </a> | YSFReflector Network
-  </div>
-
-  <div class="topbar-right">
-    <span>📡 YSF</span>
-    <span>📶 DMR</span>
-    <span>📻 NXDN</span>
-  </div>
-
+  <a href="https://kernwifi.com.au" target="_blank">KernWi‑Fi</a>
+  <span class="divider">|</span>
+  <span class="title">YSF Reflector Network</span>
 </div>
 
 <div class="container">
 
 <!-- STATUS -->
 <div class="box">
-<h3>📊 Status</h3>
-<p id="status">
-  <span class="status-online">Loading...</span> ·
-  at <a href="https://kernwifi.com.au/our-network/" target="_blank" class="status-link">Kern DC</a>
-  (Adelaide SA)
-</p>
+<b>Status:</b> <span id="status">--</span><br>
+<b>Connections:</b> <span id="connections">--</span>
 </div>
 
-<!-- TX -->
+<!-- ACTIVITY -->
 <div class="box">
-<h3>📡 Active Transmission</h3>
-<p id="tx">None</p>
-</div>
+<h3>🔴 Active Transmission</h3>
 
-<!-- LAST HEARD -->
-<div class="box">
-<h3>🕒 Last Heard</h3>
-<ul id="heard"></ul>
+<div id="tx">--</div>
+
+<hr style="border:1px solid #333; margin:12px 0;">
+
+<h4>📻 Last Heard</h4>
+<div id="heard"></div>
+
 </div>
 
 <!-- USERS -->
 <div class="box">
-<h3>👥 Connected Users (<span id="count">0</span>)</h3>
-<ul id="users"></ul>
+<h3>🔗 Connected Users</h3>
+<div id="users"></div>
 </div>
 
 </div>
 
 <!-- FOOTER -->
 <div class="footer">
-
-  <div style="margin-bottom: 4px;">
-    💬 Feedback or improvements?
-    <a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1"
-       target="_blank"
-       class="status-link">Click here</a>
-  </div>
-
-  © <span id="year"></span> KernWi-Fi Pty Ltd ·
-  Ver <span id="version">--</span> ·
-  Rev 1.7.2
+© 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 2.8.2
+&nbsp; | &nbsp;
+<a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1" target="_blank">
+Feedback / Improvements?
+</a>
 </div>
 
 <script>
 
-function getFlag(cs) {
-  if (cs.startsWith("VK")) return "🇦🇺";
-  if (cs.startsWith("W") || cs.startsWith("K") || cs.startsWith("N")) return "🇺🇸";
-  if (cs.startsWith("G")) return "🇬🇧";
-  return "🌍";
-}
-
 async function loadData() {
-  try {
-    const res = await fetch("/ysf/status.json");
-    const data = await res.json();
 
-    // STATUS
-    document.querySelector("#status span").innerText = data.status;
+  let res = await fetch("/ysf/status.json?ts=" + Date.now());
+  let data = await res.json();
 
-    // TX
-    if (data.transmitting) {
-      document.getElementById("tx").innerHTML =
-        '<span class="tx-live">🔴 ' + data.transmitting +
-        ' ' + getFlag(data.transmitting) +
-        ' — LIVE (' + data.tx_duration + 's)</span>';
-    } else {
-      document.getElementById("tx").innerText = "No active transmission";
-    }
+  // STATUS
+  document.getElementById("status").innerHTML =
+    `<span class="online">${data.status}</span>`;
 
-    // LAST HEARD
-    let heardHTML = "";
+  document.getElementById("connections").innerText = data.connection_count;
+  document.getElementById("version").innerText = data.version;
 
-    if (data.last_heard && data.last_heard.length > 0) {
-
-      data.last_heard.forEach(h => {
-
-        let label = h.callsign;
-
-        if (h.callsign === data.local_callsign) label += " ⭐";
-        if (h.callsign === data.transmitting) label += " 🔴";
-
-        if (h.callsign === data.transmitting) {
-          heardHTML += `<li class="tx-row"><strong>${label} ${getFlag(h.callsign)} — ${h.time}</strong></li>`;
-        } else {
-          heardHTML += `<li>${label} ${getFlag(h.callsign)} — ${h.time}</li>`;
-        }
-
-      });
-
-    } else {
-      heardHTML = "<li>No recent activity</li>";
-    }
-
-    document.getElementById("heard").innerHTML = heardHTML;
-
-    // USERS
-    let html = "";
-
-    if (data.connected_users && data.connected_users.length > 0) {
-
-      data.connected_users.forEach(u => {
-
-        let label = u;
-
-        if (u === data.local_callsign) label += " ⭐";
-        if (u === data.transmitting) label += " 🔴";
-
-        if (u === data.transmitting) {
-          html += `<li class="tx-row"><strong>${label} ${getFlag(u)}</strong></li>`;
-        } else {
-          html += `<li>${label} ${getFlag(u)}</li>`;
-        }
-
-      });
-
-      document.getElementById("count").innerText = data.connected_users.length;
-
-    } else {
-      html = "<li>No users</li>";
-      document.getElementById("count").innerText = 0;
-    }
-
-    document.getElementById("users").innerHTML = html;
-
-    // FOOTER
-    document.getElementById("version").innerText = data.version;
-    document.getElementById("year").innerText = new Date().getFullYear();
-
-  } catch (err) {
-    console.log(err);
+  // TX
+  if (data.transmitting) {
+    document.getElementById("tx").innerHTML =
+      `<span class="active">🔴 ${data.transmitting}</span>`;
+  } else if (data.last_heard && data.last_heard.length > 0) {
+    let lh = data.last_heard[0];
+    document.getElementById("tx").innerHTML =
+      `<span class="idle">Last: ${lh.callsign} (${lh.time})</span>`;
+  } else {
+    document.getElementById("tx").innerHTML =
+      `<span class="idle">No recent activity</span>`;
   }
+
+  // USERS
+  let usersHTML = "";
+  data.connected_users.forEach(u => {
+
+    let cssClass = "callsign";
+    let label = u;
+
+    if (data.transmitting && u === data.transmitting) {
+      cssClass += " active-user";
+      label = "🔴 " + u;
+    }
+
+    usersHTML += `<div class="${cssClass}">${label}</div>`;
+  });
+
+  document.getElementById("users").innerHTML = usersHTML;
+
+  // LAST HEARD
+  let heardHTML = "";
+  data.last_heard.forEach(e => {
+    heardHTML += `<div>${e.callsign} (${e.time})</div>`;
+  });
+
+  document.getElementById("heard").innerHTML = heardHTML;
 }
 
 loadData();
@@ -286,3 +242,4 @@ setInterval(loadData, 2000);
 
 </body>
 </html>
+
