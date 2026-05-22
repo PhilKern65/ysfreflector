@@ -2,17 +2,16 @@
 <!--
 ==================================================
 KernWi-Fi YSF Public Dashboard
-Revision: 2.8.2
+Revision: 2.9
 Date: 22 May 2026
 
 Changes:
-- Restored LEFT-aligned topbar
-- Preserved original header design:
-    KernWi‑Fi (link) | YSF Reflector Network
-- Retained all functionality from Rev 2.6+
+- Simplified UI: unified Activity panel
+- Removed duplication between TX and Last Heard
+- Cleaner operator-focused layout
 
 Notes:
-- Requires backend Ver 1.17.9
+- Requires backend Ver 1.17.11+
 ==================================================
 -->
 
@@ -32,7 +31,7 @@ body {
   padding-bottom: 50px;
 }
 
-/* ✅ TOP BAR (LEFT ALIGNED) */
+/* TOP BAR */
 .topbar {
   position: fixed;
   top: 0;
@@ -41,7 +40,7 @@ body {
   padding: 12px 20px;
   font-size: 16px;
   border-bottom: 1px solid #333;
-  text-align: left;   /* ✅ KEY FIX */
+  text-align: left;
 }
 
 .topbar a {
@@ -103,11 +102,15 @@ body {
   background: rgba(239, 68, 68, 0.1);
 }
 
-/* LAST HEARD */
-#heard div {
+/* ✅ ACTIVITY PANEL */
+#activity div {
   margin: 4px 0;
   font-size: 14px;
-  color: #9ca3af;
+}
+
+#activity .live {
+  color: #ef4444;
+  font-weight: bold;
 }
 
 /* FOOTER */
@@ -137,7 +140,7 @@ body {
 
 <body>
 
-<!-- ✅ ORIGINAL HEADER RESTORED -->
+<!-- TOP BAR -->
 <div class="topbar">
   <a href="https://kernwifi.com.au" target="_blank">KernWi‑Fi</a>
   <span class="divider">|</span>
@@ -152,17 +155,10 @@ body {
 <b>Connections:</b> <span id="connections">--</span>
 </div>
 
-<!-- ACTIVITY -->
+<!-- ✅ UNIFIED ACTIVITY PANEL -->
 <div class="box">
-<h3>🔴 Active Transmission</h3>
-
-<div id="tx">--</div>
-
-<hr style="border:1px solid #333; margin:12px 0;">
-
-<h4>📻 Last Heard</h4>
-<div id="heard"></div>
-
+<h3>📻 Activity</h3>
+<div id="activity"></div>
 </div>
 
 <!-- USERS -->
@@ -174,12 +170,12 @@ body {
 </div>
 
 <!-- FOOTER -->
-<div class="footer">
-© 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 2.8.2
-&nbsp; | &nbsp;
-<a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1" target="_blank">
-Feedback / Improvements?
-</a>
+<div class="footer" style="margin-top:40px; text-align:center;">
+    © 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 1.7.2
+    &nbsp; | &nbsp;
+    <a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1" class="status-link" target="_blank">
+        Feedback & Improvements
+    </a>
 </div>
 
 <script>
@@ -196,20 +192,25 @@ async function loadData() {
   document.getElementById("connections").innerText = data.connection_count;
   document.getElementById("version").innerText = data.version;
 
-  // TX
+  // ✅ ACTIVITY LOGIC (UNIFIED)
+  let activityHTML = "";
+
   if (data.transmitting) {
-    document.getElementById("tx").innerHTML =
-      `<span class="active">🔴 ${data.transmitting}</span>`;
-  } else if (data.last_heard && data.last_heard.length > 0) {
-    let lh = data.last_heard[0];
-    document.getElementById("tx").innerHTML =
-      `<span class="idle">Last: ${lh.callsign} (${lh.time})</span>`;
-  } else {
-    document.getElementById("tx").innerHTML =
-      `<span class="idle">No recent activity</span>`;
+    activityHTML += `<div class="live">🔴 ${data.transmitting} (LIVE)</div>`;
   }
 
-  // USERS
+  data.last_heard.forEach(e => {
+    if (data.transmitting && e.callsign === data.transmitting) return;
+    activityHTML += `<div>${e.callsign} (${e.time})</div>`;
+  });
+
+  if (activityHTML === "") {
+    activityHTML = `<div class="idle">No recent activity</div>`;
+  }
+
+  document.getElementById("activity").innerHTML = activityHTML;
+
+  // USERS (highlight active)
   let usersHTML = "";
   data.connected_users.forEach(u => {
 
@@ -225,14 +226,6 @@ async function loadData() {
   });
 
   document.getElementById("users").innerHTML = usersHTML;
-
-  // LAST HEARD
-  let heardHTML = "";
-  data.last_heard.forEach(e => {
-    heardHTML += `<div>${e.callsign} (${e.time})</div>`;
-  });
-
-  document.getElementById("heard").innerHTML = heardHTML;
 }
 
 loadData();
@@ -242,4 +235,3 @@ setInterval(loadData, 2000);
 
 </body>
 </html>
-
