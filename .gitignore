@@ -1,0 +1,29 @@
+# Build artifacts
+*.o
+
+# Reflector logs
+YSFReflector-*.log
+
+# Generic logs
+*.log
+logs/
+
+# Runtime files
+*.pid
+*.sock
+last_heard*
+cache/
+
+# Python
+__pycache__/
+*.pyc
+
+# Temporary / backups
+*.bak
+*.old
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+status.json
