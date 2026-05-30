@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!--
+==================================================
+KernWi-Fi YSF Public Dashboard
+Revision: 3.1.1
+Date: 25 May 2026
+
+Changes:
+- Connected Users grid layout
+- Country flags added (after callsign)
+- Active user flag fix
+- UI refinements and consistency
+
+Notes:
+- Requires backend Ver 1.17.23.1+
+==================================================
+-->
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>YSFReflector Dashboard</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
+
+<style>
+body {
+  background: #0a0f1a;
+  color: #e6edf3;
+  font-family: Arial;
+  margin: 0;
+  padding-top: 70px;
+  padding-bottom: 50px;
+}
+
+/* TOP BAR */
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #111827;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+.topbar a {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.topbar a:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.divider {
+  margin: 0 8px;
+  color: #6b7280;
+}
+
+.title {
+  font-weight: 500;
+}
+
+/* CONTENT */
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.box {
+  background: #1c2333;
+  padding: 15px;
+  margin: 14px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* HEADINGS */
+h3 {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* STATUS */
+.online { color: #4ade80; }
+.active { color: #ef4444; font-weight: bold; }
+.idle { color: #fbbf24; }
+
+.status-label {
+  color: #fbbf24;
+}
+
+#kernDcLink {
+  color: #fbbf24;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 3px;
+  transition: color 0.2s ease;
+}
+
+#kernDcLink:hover {
+  color: #fde68a;
+  text-decoration: underline;
+}
+
+/* USERS GRID */
+#users {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.callsign {
+  padding: 6px 10px;
+  background: #111827;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* ACTIVE USER */
+.active-user {
+  color: #ef4444;
+  font-weight: bold;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ACTIVITY */
+#activity div {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+#activity .live {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* FOOTER */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #111827;
+  padding: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+  border-top: 1px solid #333;
+  text-align: center;
+}
+
+.footer a {
+  color: #60a5fa;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #93c5fd;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <a href="https://kernwifi.com.au" target="_blank">KernWi‑Fi</a>
+  <span class="divider">|</span>
+  <span class="title">YSF Reflector Network</span>
+</div>
+
+<div class="container">
+
+<div class="box">
+  <b><span class="status-label">Status:</span></b>
+  <span id="status">--</span>
+  <a href="https://kernwifi.com.au/our-network/" target="_blank" id="kernDcLink">
+    at Kern DC
+  </a><br>
+  <b>Connections:</b> <span id="connections">--</span>
+</div>
+
+<div class="box">
+  <h3>📻 Activity</h3>
+  <div id="activity"></div>
+</div>
+
+<div class="box">
+  <h3>🔗 Connected Users</h3>
+  <div id="users"></div>
+</div>
+
+</div>
+
+<div class="footer">
+  © 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 3.1.1
+  &nbsp; | &nbsp;
+  <a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1" target="_blank">
+    Feedback & Improvements
+  </a>
+</div>
+
+<script>
+
+function getFlag(callsign) {
+  callsign = callsign.toUpperCase();
+
+  if (callsign.startsWith("VK")) return "🇦🇺";
+  if (callsign.startsWith("ZL")) return "🇳🇿";
+  if (callsign.startsWith("G") || callsign.startsWith("M")) return "🇬🇧";
+  if (callsign.startsWith("W") || callsign.startsWith("K") || callsign.startsWith("N")) return "🇺🇸";
+  if (callsign.startsWith("JA")) return "🇯🇵";
+  if (callsign.startsWith("SV")) return "🇬🇷";
+  if (callsign.startsWith("DL")) return "🇩🇪";
+
+  return "🌐";
+}
+
+async function loadData() {
+
+  let res = await fetch("/ysf/status.json?ts=" + Date.now());
+  let data = await res.json();
+
+  // STATUS
+  document.getElementById("status").innerHTML =
+    `<span class="online">${data.status}</span>`;
+
+  document.getElementById("connections").innerText = data.connection_count;
+  document.getElementById("version").innerText = data.version;
+
+  // ACTIVITY
+  let activityHTML = "";
+
+  if (data.transmitting) {
+    activityHTML += `<div class="live">🔴 ${data.transmitting} ${getFlag(data.transmitting)} (LIVE)</div>`;
+  }
+
+  data.last_heard.forEach(e => {
+    if (data.transmitting && e.callsign === data.transmitting) return;
+    activityHTML += `<div>${e.callsign} ${getFlag(e.callsign)} (${e.time})</div>`;
+  });
+
+  if (activityHTML === "") {
+    activityHTML = `<div class="idle">No recent activity</div>`;
+  }
+
+  document.getElementById("activity").innerHTML = activityHTML;
+
+  // USERS
+  let usersHTML = "";
+  data.connected_users.forEach(u => {
+
+    let cssClass = "callsign";
+    let label = `${u} ${getFlag(u)}`;
+
+    if (data.transmitting && u === data.transmitting) {
+      cssClass += " active-user";
+      label = `🔴 ${u} ${getFlag(u)}`;
+    }
+
+    usersHTML += `<div class="${cssClass}">${label}</div>`;
+  });
+
+  document.getElementById("users").innerHTML = usersHTML;
+}
+
+loadData();
+setInterval(loadData, 2000);
+
+</script>
+
+</body>
+</html>
