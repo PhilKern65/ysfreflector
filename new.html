@@ -1418,6 +1418,180 @@ body {
   }
 }
 
+
+/* REV 3.3.x INLINE TRANSMISSION SUMMARY */
+
+.summary-card {
+  display: grid !important;
+  grid-template-columns: minmax(240px, 1fr) minmax(260px, 1fr) minmax(180px, auto) !important;
+  align-items: center !important;
+  gap: 22px !important;
+}
+
+.summary-transmission {
+  text-align: center;
+  min-width: 240px;
+}
+
+.summary-transmission-label {
+  color: #93a4b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+.summary-transmission #liveTraffic {
+  min-height: auto;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.summary-transmission .idle,
+.summary-transmission .live {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.live-card {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .summary-card {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    gap: 14px !important;
+  }
+
+  .summary-main,
+  .summary-transmission,
+  .summary-count {
+    text-align: center !important;
+    min-width: unset !important;
+  }
+
+  .summary-status,
+  .summary-count-number {
+    justify-content: center !important;
+  }
+}
+
+
+/* REV 3.3.x LIVE TRAFFIC SUMMARY CENTERING */
+
+.summary-transmission {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.summary-transmission-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  color: #cbd5e1;
+  font-size: 12px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 850;
+}
+
+.summary-transmission-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #60a5fa;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.summary-transmission #liveTraffic {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100%;
+}
+
+.summary-transmission .live-indicator {
+  justify-content: center !important;
+}
+
+
+/* REV 3.3.x LIVE TRAFFIC LEFT ALIGNMENT TUNE */
+
+.summary-card {
+  grid-template-columns: minmax(300px, 1.15fr) minmax(260px, 0.9fr) minmax(170px, auto) !important;
+}
+
+.summary-transmission {
+  justify-self: start !important;
+  text-align: center !important;
+  padding-left: 8px;
+}
+
+.summary-transmission-label {
+  justify-content: center !important;
+}
+
+.summary-transmission #liveTraffic {
+  justify-content: center !important;
+}
+
+@media (max-width: 900px) {
+  .summary-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .summary-transmission {
+    justify-self: center !important;
+    padding-left: 0 !important;
+  }
+}
+
+
+/* REV 3.3.x LIVE TRAFFIC STRONG LEFT POSITION TUNE */
+
+.summary-card {
+  grid-template-columns: minmax(310px, 1fr) minmax(280px, 0.8fr) minmax(170px, auto) !important;
+}
+
+.summary-transmission {
+  justify-self: start !important;
+  text-align: center !important;
+  transform: translateX(-70px) !important;
+  min-width: 280px !important;
+}
+
+.summary-transmission-label,
+.summary-transmission #liveTraffic {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+@media (max-width: 900px) {
+  .summary-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .summary-transmission {
+    justify-self: center !important;
+    transform: none !important;
+    min-width: unset !important;
+  }
+}
+
 </style>
 </head>
 
@@ -1627,53 +1801,57 @@ body {
 </div>
 
 
+
 <div class="summary-card">
 
   <div class="summary-main">
-
     <div class="summary-status">
-      <svg class="summary-icon online-icon"
-           viewBox="0 0 24 24"
-           aria-hidden="true">
+      <svg class="summary-icon online-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/>
         <path d="M9 12l2 2 4-4"/>
       </svg>
-
       <span id="status">--</span>
     </div>
 
     <div class="summary-meta">
-      Hosted at Kern DC •
-      <span id="localCallsign">VK5PK</span>
+      Hosted at Kern DC • <span id="localCallsign">VK5PK</span>
     </div>
+  </div>
 
+  <div class="summary-transmission" id="live">
+    
+<div class="summary-transmission-label">
+  <svg class="summary-transmission-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M2 12h3"></path>
+    <path d="M19 12h3"></path>
+    <path d="M7 5a10 10 0 0 1 0 14"></path>
+    <path d="M17 5a10 10 0 0 0 0 14"></path>
+    <circle cx="12" cy="12" r="2"></circle>
+  </svg>
+  <span>Live Traffic</span>
+</div>
+
+    <div id="liveTraffic"></div>
   </div>
 
   <div class="summary-count">
-
     <div class="summary-count-number">
-      <svg class="summary-icon users-icon"
-           viewBox="0 0 24 24"
-           aria-hidden="true">
+      <svg class="summary-icon users-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
         <circle cx="9.5" cy="7" r="4"/>
         <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
-
       <span id="connections">--</span>
     </div>
-
     <div class="summary-count-label">Connected Users</div>
-
   </div>
 
 </div>
 
 
-<div class="box live-card" id="live">
-  <div id="liveTraffic"></div>
-</div>
+
+
 
 <div class="box primary-panel" id="last-heard">
   <h3>
