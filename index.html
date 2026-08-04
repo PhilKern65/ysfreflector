@@ -1592,6 +1592,151 @@ body {
   }
 }
 
+
+/* REV 3.3.x APRS WEATHER TWO-STATION BALANCE */
+
+.aprs-weather-grid {
+  justify-content: center !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 300px)) !important;
+  gap: 16px !important;
+}
+
+.aprs-weather-station {
+  min-height: 180px;
+  padding: 16px !important;
+  text-align: left;
+}
+
+.aprs-weather-station-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.aprs-weather-callsign {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.aprs-weather-fresh {
+  font-size: 12px;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.aprs-weather-temp {
+  font-size: 32px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  margin: 8px 0 6px;
+}
+
+.aprs-weather-meta {
+  color: #93c5fd;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.aprs-weather-line {
+  color: #dbeafe;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.aprs-weather-line.compact {
+  color: #cbd5e1;
+}
+
+.aprs-source-note {
+  text-align: center;
+  margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .aprs-weather-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .aprs-weather-temp {
+    font-size: 28px;
+  }
+}
+
+
+/* REV 3.3.x APRS WEATHER COMPACT TUNE */
+
+#aprs-weather {
+  padding: 14px 16px !important;
+}
+
+#aprs-weather .aprs-panel-header {
+  margin-bottom: 10px !important;
+}
+
+#aprs-weather .summary-meta {
+  font-size: 13px !important;
+}
+
+.aprs-weather-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 280px)) !important;
+  gap: 14px !important;
+  margin-top: 12px !important;
+}
+
+.aprs-weather-station {
+  min-height: 135px !important;
+  padding: 13px 15px !important;
+  border-radius: 10px !important;
+}
+
+.aprs-weather-station-header {
+  margin-bottom: 6px !important;
+}
+
+.aprs-weather-callsign {
+  font-size: 19px !important;
+}
+
+.aprs-weather-fresh {
+  font-size: 11px !important;
+}
+
+.aprs-weather-temp {
+  font-size: 27px !important;
+  margin: 5px 0 4px !important;
+  line-height: 1.05 !important;
+}
+
+.aprs-weather-meta {
+  font-size: 13px !important;
+  margin-bottom: 7px !important;
+}
+
+.aprs-weather-line {
+  font-size: 12.5px !important;
+  line-height: 1.42 !important;
+}
+
+.aprs-source-note {
+  margin-top: 10px !important;
+  font-size: 11.5px !important;
+}
+
+@media (max-width: 900px) {
+  .aprs-weather-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .aprs-weather-temp {
+    font-size: 26px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -1895,7 +2040,7 @@ body {
             <path d="M8 13h8"></path>
             <path d="M8 16h5"></path>
           </svg>
-          Local APRS Weather
+          Local VK5 APRS Weather
         </span>
       </h3>
       <div id="aprsWeatherSummary" class="summary-meta">
@@ -2161,18 +2306,35 @@ async function loadWeatherData() {
     let html = "";
 
     stations.forEach(s => {
+      const callsign = s.callsign || "--";
+      const fresh = s.fresh || "--";
+      const temperature = s.temperature || "--";
+      const humidity = s.humidity || "--";
+      const pressure = s.pressure || "--";
+      const wind = s.wind || "--";
+      const gust = s.gust || "--";
+      const rain = s.rain || "--";
+
       html += `
         <div class="aprs-weather-station">
           <div class="aprs-weather-station-header">
-            <div class="aprs-weather-callsign">${s.callsign || "--"}</div>
-            <div class="aprs-weather-fresh">${s.fresh || "--"}</div>
+            <div class="aprs-weather-callsign">${callsign}</div>
+            <div class="aprs-weather-fresh">${fresh}</div>
           </div>
-          <div class="aprs-weather-line">Temperature: ${s.temperature || "--"}</div>
-          <div class="aprs-weather-line">Humidity: ${s.humidity || "--"}</div>
-          <div class="aprs-weather-line">Pressure: ${s.pressure || "--"}</div>
-          <div class="aprs-weather-line">Wind: ${s.wind || "--"}</div>
-          <div class="aprs-weather-line">Gust: ${s.gust || "--"}</div>
-          <div class="aprs-weather-line">Rain: ${s.rain || "--"}</div>
+
+          <div class="aprs-weather-temp">${temperature}</div>
+
+          <div class="aprs-weather-meta">
+            ${humidity} RH · ${pressure}
+          </div>
+
+          <div class="aprs-weather-line">
+            Wind ${wind}
+          </div>
+
+          <div class="aprs-weather-line compact">
+            Gust ${gust} · Rain ${rain}
+          </div>
         </div>
       `;
     });
