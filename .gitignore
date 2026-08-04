@@ -27,3 +27,13 @@ __pycache__/
 Thumbs.db
 
 status.json
+
+# Local UI rollback / staging backups
+*.bak
+*.bak.*
+*.pre-*
+*.pre-*.bak
+index.html.pre-*
+new.html.bak.*
+new.html.pre-*
+new.html.corrupt-*
