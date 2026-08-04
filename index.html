@@ -2,7 +2,7 @@
 <!--
 ==================================================
 KernWi-Fi YSF Public Dashboard
-Revision: 3.3.0
+Revision: 3.3.1
 Date: 4 August 2026
 
 Changes:
@@ -783,6 +783,51 @@ body {
 
 
 
+/* REV 3.3.0 LINK STYLING */
+
+.inline-link {
+  color: #93c5fd;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.inline-link:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
+}
+
+.sidebar-links {
+  border-top: 1px solid rgba(148,163,184,0.14);
+  padding-top: 14px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 7px 4px;
+  border-radius: 8px;
+}
+
+.sidebar-link:hover {
+  color: #ffffff;
+  background: rgba(96,165,250,0.12);
+}
+
+.sidebar-link svg {
+  width: 16px;
+  height: 16px;
+  stroke: #60a5fa;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
 /* REV 3.3.0 HERO LINK STYLING */
 
 .inline-link {
@@ -1155,6 +1200,224 @@ body {
   color: #ffffff;
 }
 
+
+/* REV 3.3.x HERO RADIO TOWER BACKGROUND */
+
+.hero-banner {
+  position: relative !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 23, 46, 0.98) 0%,
+      rgba(8, 23, 46, 0.94) 42%,
+      rgba(8, 23, 46, 0.72) 64%,
+      rgba(8, 23, 46, 0.30) 100%
+    ),
+    url('/ysf/assets/hero-radio-tower.png') !important;
+  background-size: cover !important;
+  background-position: center right !important;
+  background-repeat: no-repeat !important;
+}
+
+.hero-title,
+.hero-description,
+.hero-collaboration {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-description {
+  max-width: 680px;
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 23, 46, 0.98) 0%,
+        rgba(8, 23, 46, 0.92) 100%
+      ),
+      url('/ysf/assets/hero-radio-tower.png') !important;
+    background-size: cover !important;
+    background-position: center right !important;
+  }
+}
+
+
+/* REV 3.3.x HERO IMAGE RESIZE TUNING */
+
+.hero-banner {
+  background-size: auto 130% !important;
+  background-position: right 24px center !important;
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background-size: auto 100% !important;
+    background-position: right center !important;
+  }
+}
+
+
+/* REV 3.3.x HERO IMAGE FINAL TOUCH-UP */
+
+.hero-banner {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 23, 46, 0.99) 0%,
+      rgba(8, 23, 46, 0.96) 42%,
+      rgba(8, 23, 46, 0.82) 64%,
+      rgba(8, 23, 46, 0.48) 100%
+    ),
+    url('/ysf/assets/hero-radio-tower.png') !important;
+  background-size: auto 115% !important;
+  background-position: right 10px center !important;
+  background-repeat: no-repeat !important;
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 23, 46, 0.99) 0%,
+        rgba(8, 23, 46, 0.94) 100%
+      ),
+      url('/ysf/assets/hero-radio-tower.png') !important;
+    background-size: auto 100% !important;
+    background-position: right center !important;
+  }
+}
+
+
+/* REV 3.3.x HERO IMAGE FINAL POSITIONING */
+
+.hero-banner {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 23, 46, 0.99) 0%,
+      rgba(8, 23, 46, 0.96) 42%,
+      rgba(8, 23, 46, 0.78) 64%,
+      rgba(8, 23, 46, 0.38) 100%
+    ),
+    url('/ysf/assets/hero-radio-tower.png') !important;
+  background-size: auto 125% !important;
+  background-position: right -8px center !important;
+  background-repeat: no-repeat !important;
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 23, 46, 0.99) 0%,
+        rgba(8, 23, 46, 0.94) 100%
+      ),
+      url('/ysf/assets/hero-radio-tower.png') !important;
+    background-size: auto 105% !important;
+    background-position: right center !important;
+  }
+}
+
+
+/* REV 3.3.x HERO LEFT BLEND FINAL TUNE */
+
+.hero-banner {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 23, 46, 1.00) 0%,
+      rgba(8, 23, 46, 0.99) 34%,
+      rgba(8, 23, 46, 0.96) 50%,
+      rgba(8, 23, 46, 0.78) 70%,
+      rgba(8, 23, 46, 0.42) 100%
+    ),
+    url('/ysf/assets/hero-radio-tower.png') !important;
+  background-size: auto 125% !important;
+  background-position: right -8px center !important;
+  background-repeat: no-repeat !important;
+}
+
+.hero-title,
+.hero-description,
+.hero-collaboration {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 23, 46, 1.00) 0%,
+        rgba(8, 23, 46, 0.96) 100%
+      ),
+      url('/ysf/assets/hero-radio-tower.png') !important;
+    background-size: auto 105% !important;
+    background-position: right center !important;
+  }
+}
+
+
+/* REV 3.3.x HERO LEFT SIDE POLISH */
+
+.hero-banner {
+  background:
+    radial-gradient(
+      circle at 12% 22%,
+      rgba(96, 165, 250, 0.16) 0%,
+      rgba(96, 165, 250, 0.08) 22%,
+      rgba(8, 23, 46, 0.00) 48%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(8, 23, 46, 0.98) 0%,
+      rgba(8, 23, 46, 0.96) 34%,
+      rgba(8, 23, 46, 0.92) 50%,
+      rgba(8, 23, 46, 0.76) 70%,
+      rgba(8, 23, 46, 0.42) 100%
+    ),
+    url('/ysf/assets/hero-radio-tower.png') !important;
+  background-size: auto, auto, auto 125% !important;
+  background-position: left top, left top, right -8px center !important;
+  background-repeat: no-repeat !important;
+}
+
+.hero-title {
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.55),
+    0 0 22px rgba(96, 165, 250, 0.14);
+}
+
+.hero-description,
+.hero-collaboration {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 900px) {
+  .hero-banner {
+    background:
+      radial-gradient(
+        circle at 18% 20%,
+        rgba(96, 165, 250, 0.12) 0%,
+        rgba(8, 23, 46, 0.00) 48%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(8, 23, 46, 0.99) 0%,
+        rgba(8, 23, 46, 0.94) 100%
+      ),
+      url('/ysf/assets/hero-radio-tower.png') !important;
+    background-size: auto, auto, auto 105% !important;
+    background-position: left top, left top, right center !important;
+  }
+}
+
 </style>
 </head>
 
@@ -1293,10 +1556,11 @@ body {
 
       <div class="sidebar-stat">
         <div class="sidebar-stat-label">UI Revision</div>
-        <div class="sidebar-stat-value">3.3.0</div>
+        <div class="sidebar-stat-value">3.3.1</div>
       </div>
     </div>
 
+    
         <div class="sidebar-links">
 
       <a class="sidebar-link" href="https://kernwifi.com.au" target="_blank" rel="noopener noreferrer">
@@ -1556,7 +1820,7 @@ body {
 
 
 <div class="footer">
-  © 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 3.3.0
+  © 2026 KernWi‑Fi Pty Ltd · Ver <span id="version">--</span> · Rev 3.3.1
   &nbsp; | &nbsp;
   <a href="https://my2.kernwifi.com.au/client/submitticket.php?step=2&deptid=1" target="_blank">
     Feedback & Improvements
