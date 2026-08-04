@@ -1488,6 +1488,7 @@ body {
 
 
 
+
 <div class="box" id="aprs-weather">
   <div class="aprs-panel-header">
     <div>
@@ -1501,30 +1502,17 @@ body {
           Local APRS Weather
         </span>
       </h3>
-      <div class="summary-meta">
-        Read-only public weather summary from APRS weather reports.
+      <div id="aprsWeatherSummary" class="summary-meta">
+        Loading APRS weather observations...
       </div>
     </div>
 
-    <div class="aprs-pill pending">PENDING</div>
+    <div id="aprsWeatherStatus" class="aprs-pill pending">LOADING</div>
   </div>
 
-  <div class="summary-meta">
-    APRS weather feed integration is reserved for this panel. Once connected, this section will show local station temperature, humidity, pressure, wind, gust and rainfall observations.
-  </div>
-
-  <div class="aprs-weather-grid">
+  <div id="aprsWeatherStations" class="aprs-weather-grid">
     <div class="aprs-weather-station">
-      <div class="aprs-weather-station-header">
-        <div class="aprs-weather-callsign">Station</div>
-        <div class="aprs-weather-fresh">Awaiting feed</div>
-      </div>
-      <div class="aprs-weather-line">Temperature: --</div>
-      <div class="aprs-weather-line">Humidity: --</div>
-      <div class="aprs-weather-line">Pressure: --</div>
-      <div class="aprs-weather-line">Wind: --</div>
-      <div class="aprs-weather-line">Gust: --</div>
-      <div class="aprs-weather-line">Rain: --</div>
+      <div class="aprs-weather-line">Loading sanitised APRS weather feed...</div>
     </div>
   </div>
 
@@ -1532,6 +1520,7 @@ body {
     Source: Sanitised APRS weather feed. No raw packets or operator controls exposed.
   </div>
 </div>
+
 
 <div class="box aprs-trends-card" id="aprs-weather-trends">
   <div class="aprs-panel-header">
@@ -1743,8 +1732,85 @@ async function loadData() {
   document.getElementById("users").innerHTML = usersHTML;
 }
 
+
+async function loadWeatherData() {
+  const statusEl = document.getElementById("aprsWeatherStatus");
+  const summaryEl = document.getElementById("aprsWeatherSummary");
+  const stationsEl = document.getElementById("aprsWeatherStations");
+
+  if (!statusEl || !summaryEl || !stationsEl) {
+    return;
+  }
+
+  try {
+    const res = await fetch("/ysf/aprs-weather.json?ts=" + Date.now());
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const weather = await res.json();
+
+    const status = weather.status || "LIVE";
+    const stations = Array.isArray(weather.stations) ? weather.stations : [];
+    const stationCount = weather.station_count ?? stations.length;
+    const updated = weather.updated || "--";
+
+    statusEl.innerText = status;
+    statusEl.classList.remove("pending");
+
+    summaryEl.innerText =
+      `${stationCount} APRS weather station(s) reporting · Updated ${updated}`;
+
+    let html = "";
+
+    stations.forEach(s => {
+      html += `
+        <div class="aprs-weather-station">
+          <div class="aprs-weather-station-header">
+            <div class="aprs-weather-callsign">${s.callsign || "--"}</div>
+            <div class="aprs-weather-fresh">${s.fresh || "--"}</div>
+          </div>
+          <div class="aprs-weather-line">Temperature: ${s.temperature || "--"}</div>
+          <div class="aprs-weather-line">Humidity: ${s.humidity || "--"}</div>
+          <div class="aprs-weather-line">Pressure: ${s.pressure || "--"}</div>
+          <div class="aprs-weather-line">Wind: ${s.wind || "--"}</div>
+          <div class="aprs-weather-line">Gust: ${s.gust || "--"}</div>
+          <div class="aprs-weather-line">Rain: ${s.rain || "--"}</div>
+        </div>
+      `;
+    });
+
+    if (html === "") {
+      html = `
+        <div class="aprs-weather-station">
+          <div class="aprs-weather-line">No APRS weather stations currently reporting.</div>
+        </div>
+      `;
+    }
+
+    stationsEl.innerHTML = html;
+
+  } catch (err) {
+    statusEl.innerText = "OFFLINE";
+    statusEl.classList.add("pending");
+    summaryEl.innerText = "APRS weather feed unavailable";
+
+    stationsEl.innerHTML = `
+      <div class="aprs-weather-station">
+        <div class="aprs-weather-line">Unable to load APRS weather data.</div>
+      </div>
+    `;
+
+    console.error("APRS weather load failed:", err);
+  }
+}
+
+
 loadData();
+loadWeatherData();
 setInterval(loadData, 2000);
+setInterval(loadWeatherData, 60000);
 
 </script>
 

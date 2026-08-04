@@ -1,0 +1,27 @@
+{
+  "status": "LIVE",
+  "updated": "2026-08-04 13:10 ACST",
+  "station_count": 2,
+  "stations": [
+    {
+      "callsign": "VK5FR",
+      "fresh": "3 min ago",
+      "temperature": "12.8 °C",
+      "humidity": "69%",
+      "pressure": "1023.7 hPa",
+      "wind": "9.3 km/h WSW",
+      "gust": "12.9 km/h",
+      "rain": "0 mm/hr · 0 mm/24h"
+    },
+    {
+      "callsign": "VK5ZSH",
+      "fresh": "6 min ago",
+      "temperature": "12.8 °C",
+      "humidity": "61%",
+      "pressure": "--",
+      "wind": "5.6 km/h SSW",
+      "gust": "8 km/h",
+      "rain": "0 mm/hr · 0 mm/24h"
+    }
+  ]
+}
