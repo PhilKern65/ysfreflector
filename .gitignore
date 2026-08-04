@@ -37,3 +37,6 @@ index.html.pre-*
 new.html.bak.*
 new.html.pre-*
 new.html.corrupt-*
+
+# Runtime APRS weather feed
+aprs-weather.json
