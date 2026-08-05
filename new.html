@@ -2133,6 +2133,145 @@ body {
   }
 }
 
+
+/* REV 3.3.4 APRS WEATHER TRENDS SAFE UI */
+
+.aprs-trends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.aprs-trend-card {
+  background: rgba(17,24,39,0.92);
+  border: 1px solid rgba(96,165,250,0.18);
+  border-radius: 12px;
+  padding: 13px 14px;
+  text-align: left;
+}
+
+.aprs-trend-label {
+  color: #93a4b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+}
+
+.aprs-trend-value {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.aprs-trend-sub {
+  color: #cbd5e1;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+  .aprs-trends-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aprs-trend-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .aprs-trends-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* REV 3.3.4 APRS SECTION CENTERING */
+
+#aprs-weather .aprs-panel-header,
+#aprs-weather-trends .aprs-panel-header {
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+#aprs-weather .aprs-panel-header > div:first-child,
+#aprs-weather-trends .aprs-panel-header > div:first-child {
+  width: 100% !important;
+  max-width: 820px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+#aprs-weather h3,
+#aprs-weather-trends h3 {
+  text-align: center !important;
+}
+
+#aprs-weather .section-title,
+#aprs-weather-trends .section-title {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+#aprs-weather .summary-meta,
+#aprs-weather-trends .summary-meta,
+#aprsTrendsSummary {
+  text-align: center !important;
+}
+
+#aprs-weather .aprs-pill,
+#aprs-weather-trends .aprs-pill {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+}
+
+#aprs-weather .aprs-weather-grid {
+  justify-content: center !important;
+}
+
+#aprs-weather-trends .aprs-trends-grid {
+  justify-content: center !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 205px)) !important;
+}
+
+#aprs-weather-trends .aprs-trend-card {
+  min-height: 88px !important;
+}
+
+@media (max-width: 900px) {
+  #aprs-weather .aprs-panel-header,
+  #aprs-weather-trends .aprs-panel-header {
+    padding-top: 34px !important;
+  }
+
+  #aprs-weather .aprs-pill,
+  #aprs-weather-trends .aprs-pill {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #aprs-weather-trends .aprs-trends-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media (max-width: 430px) {
+  #aprs-weather-trends .aprs-trends-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 </style>
 </head>
 
@@ -2772,10 +2911,195 @@ async function loadWeatherData() {
 }
 
 
+
+function aprsTrendValues(samples, field) {
+  const values = [];
+
+  samples.forEach(sample => {
+    const stations = sample.stations || {};
+
+    Object.values(stations).forEach(station => {
+      const value = station[field];
+
+      if (typeof value === "number" && Number.isFinite(value)) {
+        values.push(value);
+      }
+    });
+  });
+
+  return values;
+}
+
+function aprsTrendRange(values, unit) {
+  if (!values.length) {
+    return "--";
+  }
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+
+  if (min === max) {
+    return `${min.toFixed(1)} ${unit}`;
+  }
+
+  return `${min.toFixed(1)} – ${max.toFixed(1)} ${unit}`;
+}
+
+function aprsTrendMax(values, unit) {
+  if (!values.length) {
+    return "--";
+  }
+
+  return `${Math.max(...values).toFixed(1)} ${unit}`;
+}
+
+async function loadWeatherTrendsData() {
+  const card = document.getElementById("aprs-weather-trends");
+
+  if (!card) {
+    return;
+  }
+
+  const statusEl = card.querySelector(".aprs-pill");
+  const summaryEl = card.querySelector(".summary-meta");
+  const actionsEl = card.querySelector(".aprs-trends-actions");
+
+  if (!statusEl || !summaryEl) {
+    return;
+  }
+
+  try {
+    const res = await fetch("/ysf/aprs-weather-history.json?ts=" + Date.now());
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const history = await res.json();
+
+    const status = history.status || "COLLECTING";
+    const samples = Array.isArray(history.samples) ? history.samples : [];
+    const sampleCount = history.sample_count ?? samples.length;
+    const collectedHours = Number(history.collected_hours || 0);
+    const stationsTracked = Array.isArray(history.stations_tracked) ? history.stations_tracked : [];
+    const updated = history.updated || "--";
+
+    statusEl.innerText = status;
+    statusEl.classList.toggle("pending", status !== "LIVE");
+
+    const collectedText =
+      collectedHours < 1
+        ? `${Math.round(collectedHours * 60)} min`
+        : `${collectedHours.toFixed(2)} h`;
+
+    summaryEl.innerText =
+      `${status === "LIVE" ? "24-hour trend history available" : "Collecting trend history"} · ${sampleCount} sample(s) · ${collectedText} collected · Updated ${updated}`;
+
+    let grid = card.querySelector("#aprsTrendsContent");
+
+    if (!grid) {
+      grid = document.createElement("div");
+      grid.id = "aprsTrendsContent";
+      grid.className = "aprs-trends-grid";
+
+      if (actionsEl) {
+        actionsEl.replaceWith(grid);
+      } else {
+        card.appendChild(grid);
+      }
+    }
+
+    const temperatureValues = aprsTrendValues(samples, "temperature");
+    const humidityValues = aprsTrendValues(samples, "humidity");
+    const pressureValues = aprsTrendValues(samples, "pressure");
+    const windValues = aprsTrendValues(samples, "wind");
+    const gustValues = aprsTrendValues(samples, "gust");
+    const rainValues = aprsTrendValues(samples, "rain_24h");
+
+    const rainMax = rainValues.length ? Math.max(...rainValues) : null;
+
+    grid.innerHTML = `
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">History</div>
+        <div class="aprs-trend-value">${collectedText}</div>
+        <div class="aprs-trend-sub">${sampleCount} sample(s)</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Stations</div>
+        <div class="aprs-trend-value">${stationsTracked.length || "--"}</div>
+        <div class="aprs-trend-sub">${stationsTracked.join(", ") || "No stations tracked"}</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Temperature</div>
+        <div class="aprs-trend-value">${aprsTrendRange(temperatureValues, "°C")}</div>
+        <div class="aprs-trend-sub">Observed range</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Humidity</div>
+        <div class="aprs-trend-value">${aprsTrendRange(humidityValues, "%")}</div>
+        <div class="aprs-trend-sub">Observed range</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Pressure</div>
+        <div class="aprs-trend-value">${aprsTrendRange(pressureValues, "hPa")}</div>
+        <div class="aprs-trend-sub">Observed range</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Wind / Gust</div>
+        <div class="aprs-trend-value">${aprsTrendMax(windValues, "km/h")} / ${aprsTrendMax(gustValues, "km/h")}</div>
+        <div class="aprs-trend-sub">Peak wind / gust</div>
+      </div>
+
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">Rain</div>
+        <div class="aprs-trend-value">${rainMax === null ? "--" : rainMax.toFixed(1) + " mm"}</div>
+        <div class="aprs-trend-sub">Highest 24h station value</div>
+      </div>
+    `;
+
+  } catch (err) {
+    statusEl.innerText = "OFFLINE";
+    statusEl.classList.add("pending");
+    summaryEl.innerText = "APRS weather trend history unavailable";
+
+    let grid = card.querySelector("#aprsTrendsContent");
+
+    if (!grid) {
+      grid = document.createElement("div");
+      grid.id = "aprsTrendsContent";
+      grid.className = "aprs-trends-grid";
+
+      if (actionsEl) {
+        actionsEl.replaceWith(grid);
+      } else {
+        card.appendChild(grid);
+      }
+    }
+
+    grid.innerHTML = `
+      <div class="aprs-trend-card">
+        <div class="aprs-trend-label">History</div>
+        <div class="aprs-trend-value">Unavailable</div>
+        <div class="aprs-trend-sub">${err.message}</div>
+      </div>
+    `;
+
+    console.error("APRS weather trends load failed:", err);
+  }
+}
+
+
 loadData();
 loadWeatherData();
+loadWeatherTrendsData();
 setInterval(loadData, 2000);
 setInterval(loadWeatherData, 60000);
+setInterval(loadWeatherTrendsData, 60000);
 
 </script>
 
