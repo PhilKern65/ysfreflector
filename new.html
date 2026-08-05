@@ -1802,6 +1802,337 @@ body {
   }
 }
 
+
+/* REV 3.3.4 LIVE TRAFFIC SIZE TUNE */
+
+.summary-transmission-label {
+  font-size: 14px !important;
+  letter-spacing: 0.09em !important;
+  font-weight: 900 !important;
+  margin-bottom: 7px !important;
+}
+
+.summary-transmission-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.summary-transmission #liveTraffic {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+.summary-transmission .idle,
+.summary-transmission .live {
+  font-size: 15px !important;
+  font-weight: 850 !important;
+}
+
+.summary-transmission .live-indicator {
+  gap: 9px !important;
+}
+
+.summary-transmission .idle-dot,
+.summary-transmission .live-dot {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+@media (max-width: 900px) {
+  .summary-transmission-label {
+    font-size: 13px !important;
+  }
+
+  .summary-transmission #liveTraffic,
+  .summary-transmission .idle,
+  .summary-transmission .live {
+    font-size: 14px !important;
+  }
+}
+
+
+/* REV 3.3.4 LIVE TRAFFIC EQUAL SIZE TUNE */
+
+.summary-transmission-label {
+  font-size: 24px !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0.04em !important;
+  font-weight: 900 !important;
+  margin-bottom: 7px !important;
+  color: #ffffff !important;
+}
+
+.summary-transmission-icon {
+  width: 27px !important;
+  height: 27px !important;
+  stroke: #60a5fa !important;
+}
+
+.summary-transmission #liveTraffic {
+  font-size: 18px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.summary-transmission .idle,
+.summary-transmission .live {
+  font-size: 18px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.summary-transmission .live-indicator {
+  gap: 10px !important;
+}
+
+.summary-transmission .idle-dot,
+.summary-transmission .live-dot {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+@media (max-width: 900px) {
+  .summary-transmission-label {
+    font-size: 19px !important;
+  }
+
+  .summary-transmission-icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .summary-transmission #liveTraffic,
+  .summary-transmission .idle,
+  .summary-transmission .live {
+    font-size: 15px !important;
+  }
+}
+
+
+/* REV 3.3.4 LIVE TRAFFIC ACTIVE WRAP FIX */
+
+.summary-transmission .live-indicator-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  max-width: 100% !important;
+}
+
+.live-active-text {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.08;
+}
+
+.live-active-callsign {
+  display: block;
+  white-space: nowrap;
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.live-active-state {
+  display: block;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  opacity: 0.92;
+  margin-top: 2px;
+}
+
+.summary-transmission .live {
+  color: #ffffff !important;
+}
+
+@media (max-width: 900px) {
+  .live-active-callsign {
+    font-size: 16px !important;
+  }
+
+  .live-active-state {
+    font-size: 13px !important;
+  }
+}
+
+
+/* REV 3.3.4 LIVE TRAFFIC ACTIVE CLEAN LAYOUT */
+
+.summary-transmission .live-indicator-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  max-width: 100% !important;
+}
+
+.live-active-text {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.05 !important;
+}
+
+.live-active-callsign {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+}
+
+.live-active-state {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  color: #ffffff !important;
+  opacity: 0.95 !important;
+  margin-top: 3px !important;
+}
+
+.summary-transmission .live {
+  color: #ffffff !important;
+}
+
+@media (max-width: 900px) {
+  .live-active-callsign {
+    font-size: 17px !important;
+  }
+
+  .live-active-state {
+    font-size: 13px !important;
+  }
+}
+
+
+/* REV 3.3.4 LIVE TRAFFIC ACTIVE EXACT FIX */
+
+.summary-transmission .live-indicator-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  max-width: 100% !important;
+}
+
+.live-active-text {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.05 !important;
+}
+
+.live-active-callsign {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+}
+
+.live-active-state {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  color: #ffffff !important;
+  opacity: 0.94 !important;
+  margin-top: 3px !important;
+}
+
+.summary-transmission .live {
+  color: #ffffff !important;
+}
+
+@media (max-width: 900px) {
+  .live-active-callsign {
+    font-size: 17px !important;
+  }
+
+  .live-active-state {
+    font-size: 13px !important;
+  }
+}
+
+
+/* REV 3.3.4 LIVE TRAFFIC EQUAL HEIGHT FIX */
+
+.summary-card {
+  min-height: 92px !important;
+}
+
+.summary-transmission {
+  min-height: 58px !important;
+}
+
+.summary-transmission #liveTraffic {
+  min-height: 42px !important;
+}
+
+.summary-transmission .live-indicator,
+.summary-transmission .live-indicator-active,
+.summary-transmission .live-indicator-idle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  min-height: 36px !important;
+}
+
+.live-active-text {
+  min-height: 35px !important;
+}
+
+.live-active-callsign {
+  min-height: 22px !important;
+}
+
+.live-active-state {
+  min-height: 16px !important;
+}
+
+.live-indicator-idle .live-active-callsign {
+  color: #fbbf24 !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+}
+
+.live-indicator-idle .live-active-state {
+  color: #fbbf24 !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  opacity: 0.95 !important;
+}
+
+@media (max-width: 900px) {
+  .summary-card {
+    min-height: auto !important;
+  }
+
+  .summary-transmission {
+    min-height: auto !important;
+  }
+
+  .summary-transmission #liveTraffic {
+    min-height: auto !important;
+  }
+
+  .live-indicator-idle .live-active-callsign {
+    font-size: 17px !important;
+  }
+
+  .live-indicator-idle .live-active-state {
+    font-size: 13px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -2280,8 +2611,13 @@ async function loadData() {
 
     liveHTML = `
       <div class="live">
-        <span class="live-indicator"><span class="live-dot"></span>Live Traffic: ${displayCallsign(data.transmitting)} ${getFlag(data.transmitting)}</span>
-        transmitting now${duration}
+        <span class="live-indicator live-indicator-active">
+          <span class="live-dot"></span>
+          <span class="live-active-text">
+            <span class="live-active-callsign">${displayCallsign(data.transmitting)} ${getFlag(data.transmitting)}</span>
+            <span class="live-active-state">transmitting now${duration}</span>
+          </span>
+        </span>
       </div>
     `;
 
@@ -2289,7 +2625,13 @@ async function loadData() {
 
     liveHTML = `
       <div class="idle">
-        <span class="live-indicator"><span class="idle-dot"></span>No current transmission</span>
+        <span class="live-indicator live-indicator-idle">
+          <span class="idle-dot"></span>
+          <span class="live-active-text">
+            <span class="live-active-callsign">Idle</span>
+            <span class="live-active-state">No current transmission</span>
+          </span>
+        </span>
       </div>
     `;
 
