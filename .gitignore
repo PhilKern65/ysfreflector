@@ -40,3 +40,4 @@ new.html.corrupt-*
 
 # Runtime APRS weather feed
 aprs-weather.json
+aprs-weather-history.json
